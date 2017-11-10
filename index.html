@@ -1,26 +1,47 @@
 <!DOCTYPE html>
 <html>
+  <script>
+    function show() {
+      var x = document.getElementById("player");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
   <head>
     <style>
       .center {
-      margin: auto;
-      text-align: center;
-      padding: 100px;
+        margin: auto;
+        text-align: center;
+        padding: 100px;
+      }
+      #player {
+        text-align: center;
+        display: none;
       }
     </style>
   </head>
   <body bgcolor="#000000">
     <div class="center">
-      <a href="https://youtu.be/sateunZYM_o">
-	<img src="img/squares.jpg">
+      <a onclick="show()" href="javascript:void(0);">
+        <img src="img/squares.jpg">
       </a>
       <br>
       <a href="https://www.facebook.com/gesceap/">
-	<img src="img/fb.png" height="30" width="30">
+        <img src="img/fb.png" height="30" width="30">
       </a>
       <a href="https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q">
-	<img src="img/yt.png" height="30" width="30">
+        <img src="img/yt.png" height="30" width="30">
       </a>
+    </div>
+    <div id="player">
+      <iframe style="border: 1; height: 120px; width: 600px;" src="https://bandcamp.com/EmbeddedPlayer/album=3852052010/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/artwork=small/transparent=true/" seamless>
+        <a href="http://gesceap.bandcamp.com/album/default">
+          Default by Gesceap
+        </a>
+      </iframe>
     </div>
   </body>
 </html>
