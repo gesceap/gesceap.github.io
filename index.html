@@ -1,74 +1,12 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <script>
-    function show() {
-      var x = document.getElementById("player");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
-      }
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-    "@context": "http://schema.org/",
-    "@type": "MusicGroup",
-    "name": "Gesceap",
-    "email": "gesceapmusic@gmail.com",
-    "genre": "Electronica",
-    "description": "Nanoloop mobile electronic music made with iOS and Android devices"
-    }
-  </script>
   <head>
-    <meta name="Music created by artist Gesceap" content="Nanoloop mobile electronic music. Music created using Nanoloop app on iOS or Android Devices.">
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
-    <title>Nanoloop mobile electronic music by Gesceap</title>
-    <style>
-      .center {
-        margin: auto;
-        text-align: center;
-        padding: 30px;
-      }
-      .title {
-        margin: auto;
-        text-align: center;
-        padding: 10px;
-        font-size: 30px;
-        color: black;
-        text-shadow:
-        -1px -1px 0 #FFF,
-        1px -1px 0 #FFF,
-        -1px 1px 0 #FFF,
-        1px 1px 0 #FFF;
-      }
-      #player {
-        text-align: center;
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css">
   </head>
-  <body onload="show()" bgcolor="#000000">
-    <div class="title">/jeˈʃæɑp/</div>
-    <div class="center">
-      <a onclick="show()" href="javascript:void(0);">
-        <img src="img/squares.jpg">
-      </a>
-      <br>
-      <a href="https://www.facebook.com/gesceap/">
-        <img src="img/fb.png" height="30" width="30">
-      </a>
-      <a href="https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q">
-        <img src="img/yt.png" height="30" width="30">
-      </a>
-    </div>
-    Gesceap is a project aimed at making Nanoloop mobile electronic music using iOS and Android devices. Music is created using an iPad 2 or various Android tablets and mobile phones.
-    <div id="player">
-      <iframe style="border: 1; width: 500px; height: 120px;" src="https://bandcamp.com/EmbeddedPlayer/album=3852052010/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/artwork=small/transparent=true/" seamless>
-        <a href="http://gesceap.bandcamp.com/album/default">
-          Default by Gesceap
-        </a>
-      </iframe>
-    </div>
+  <body onload="init()">
+    <center>
+		<canvas id="drawingCanvas"></canvas>
+	<center>
   </body>
+  <script src="index.js"></script>
 </html>
