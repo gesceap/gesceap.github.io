@@ -75,6 +75,11 @@ function initContext()
 		canvas.width / 2,
 		canvas.height / 2
 	);
+	context.canvas.addEventListener(
+		'click',
+		init,
+		false
+	);
 }
 function initWindow(){
 	window.requestAnimFrame = (
