@@ -14,17 +14,8 @@ var g_x_lim = static_I / factor;
 var strokeStyles = ['#FFFFFF', '#000000'];
 var canvas = document.getElementById('drawingCanvas');
 var context = canvas.getContext('2d');
-
-window.requestAnimFrame = (
-	function(callback)
-	{
-		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-		function(callback)
-		{
-			window.setTimeout(callback, 1000 / 60);
-		};
-	}
-)();
+var rc = 0;
+var rcovElement = document.getElementById('rcov');
 
 function drawOctogon(x, y, size, strokeStyle)
 {
@@ -65,14 +56,19 @@ function animate(k, i, canvas, context)
 		static_IK+i-k,
 		strokeStyles[j]
 	);
+	drawCount();
 	requestAnimFrame(
 		function(){
 			animate(k, i, canvas, context);
 		}
 	);
 }
+function drawCount(){
+	rcovElement.textContent = "" + rc;
+}
 function initContext()
 {
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	context.canvas.height = window.innerHeight;
 	context.canvas.width = window.innerWidth;
 	context.translate(
@@ -80,9 +76,26 @@ function initContext()
 		canvas.height / 2
 	);
 }
-function main()
+function initWindow(){
+	window.requestAnimFrame = (
+		function(callback)
+		{
+			return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+			function(callback)
+			{
+				window.setTimeout(callback, 1000 / 60);
+			};
+		}
+	)();
+	window.onresize = init;
+}
+function incrementrc(){
+	rc++;
+}
+function init()
 {
+	incrementrc();
+	initWindow();
 	initContext();
 	animate(init_K, init_I, canvas, context);
 }
-main();
