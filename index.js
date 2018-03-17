@@ -10,7 +10,7 @@ var g_size_lim = I/factor;
 var g_x_lim = initI/factor;
 var canvas = document.getElementById('drawingCanvas');
 var context = canvas.getContext('2d');
-
+var STROKESTYLE = '#FFFFFF';
 context.canvas.height = window.innerHeight;
 context.canvas.width = window.innerWidth;
 context.translate(canvas.width/2, canvas.height/2);
@@ -37,7 +37,7 @@ function drawOctogon(x,y,size)
     context.lineTo(x-size, y-half);
     context.lineTo(x-size, y+half);
     context.lineTo(x-half, y+size);
-    context.strokeStyle = '#FFFFFF';
+    context.strokeStyle = STROKESTYLE;
     context.stroke();
 }
 function animate(k, i, canvas, context) 
@@ -58,6 +58,12 @@ function animate(k, i, canvas, context)
         context.rotate(k*Math.PI/180+i);
         drawOctogon(initK+k,initI+i*k,initIK+i-k);
 	requestAnimFrame( function() { animate(k, i, canvas, context); } );
-}
 
-animate(0, 13, canvas, context);
+while(true){
+	
+    STROKESTYLE = '#FFFFFF';
+    animate(0, 13, canvas, context);
+	STROKESTYLE = '#000000';
+    animate(0, 13, canvas, context);}
+	
+	
