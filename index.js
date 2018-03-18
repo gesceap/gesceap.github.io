@@ -16,6 +16,8 @@ var canvas = document.getElementById('drawingCanvas');
 var context = canvas.getContext('2d');
 var rc = 0;
 var rcovElement = document.getElementById('rcov');
+var limit = 67 * 2;
+var doneWithSquares = false;
 
 function drawOctogon(x, y, size, strokeStyle)
 {
@@ -63,9 +65,40 @@ function animate(k, i, canvas, context)
 		}
 	);
 }
+
+function drawSquare(x, y) {
+  j = 0;
+  strokeStyles = ['#FFFFFF','#000000'];
+  for (i = 0; i < limit; i++){
+    j = j ? 0 : 1;
+    context.beginPath();
+    context.strokeStyle = strokeStyles[j];
+    context.moveTo(x, y+i);
+    context.lineTo(x+limit, y+i);
+    context.stroke();
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function drawSquares(x, y) {
+  for (row = 0; row < 4; row++){
+    for (col = 0; col < 4; col++) {
+        new_x = (col * ( limit + 2 ) ) + x;
+        new_y = (row * ( limit + 2 ) ) + y;
+        drawSquare(new_x, new_y);
+        await sleep(100);
+    }
+  }
+	doneWithSquares = true;
+}
+
 function drawCount(){
 	rcovElement.textContent = "" + rc;
 }
+
 function initContext()
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -81,6 +114,7 @@ function initContext()
 		false
 	);
 }
+
 function initWindow(){
 	window.requestAnimFrame = (
 		function(callback)
@@ -92,15 +126,28 @@ function initWindow(){
 			};
 		}
 	)();
-	window.onresize = init;
+	window.onresize = start;
 }
+
 function incrementrc(){
 	rc++;
 }
-function init()
-{
-	incrementrc();
+
+async function init(){
 	initWindow();
 	initContext();
+	square_start_x = -(limit * 2);
+	square_start_y = -(limit * 2);
+	drawSquares(square_start_x, square_start_y);
+	while (!doneWithSquares){
+		await sleep(100);
+	}
+	start();
+}
+
+function start()
+{
+	doneWithSquares = false;
+	incrementrc();
 	animate(init_K, init_I, canvas, context);
 }
