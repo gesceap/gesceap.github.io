@@ -4,7 +4,7 @@
     <div class="loading" v-if="!loaded">Loading 19.2MB please wait</div>
     <div class="looper" v-else>
       <Sample
-        v-for="(source, index) in sources"
+        v-for="(source, index) in showSources"
         :source="source"
         :playing="playing.find((src) => src.filename === source.filename)"
         :queuedIn="playing.length && startQueue.indexOf(index) > -1"
@@ -53,6 +53,7 @@ export default {
       loaded: false,
       counter: 0,
       sources: [],
+      showSources: [],
       startQueue: [],
       endQueue: [],
       // baseUrl: 'https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/'
@@ -77,7 +78,7 @@ export default {
   },
 
   async created() {
-    audioContext = new window.AudioContext();
+    audioContext = WebAudioAPISoundManager.context
     timerWorker = new Worker('/metronome-worker.js')
 
     timerWorker.onmessage = e => {
@@ -97,19 +98,19 @@ export default {
 
     this.$set(this, 'sources', await loadSources())
     this.loaded = true
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    for (let i=0; i < this.sources.length; ++i) {
+      this.showSources.push(this.sources[i])
+      await sleep(100)
+    }
   },
 
   methods: {
     startInterval() {
-      if (!unlocked) {
-        // Play silent buffer to unlock the audio
-        var buffer = audioContext.createBuffer(1, 1, 22050)
-        var node = audioContext.createBufferSource()
-        node.buffer = buffer
-        node.start(0)
-        unlocked = true
-      }
-
       isPlaying = !isPlaying
 
       if (isPlaying) {
@@ -262,6 +263,8 @@ main {
   z-index: 1000;
   position: relative;
   text-transform: uppercase;
+  font-family: monospace;
+  font-weight: 300;
 }
 
 .looper {
@@ -269,7 +272,7 @@ main {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 2px;
-  grid-auto-rows: minmax(50px, auto);
+  grid-auto-rows: minmax(50px, 24.7%);
 
   width: 546px;
   height: 546px;
