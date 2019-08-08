@@ -1,14 +1,14 @@
 <template>
   <main>
-    <!-- <Background :playing="playing" :sources="sources"/> -->
+    <Background :playing="playing" :sources="sources"/>
     <div class="loading" v-if="!loaded">Loading 19.2MB please wait</div>
     <div class="looper" v-else>
       <Sample
-        v-for="source in sources"
+        v-for="(source, index) in sources"
         :source="source"
-        :playing="samplesPlaying.findIndex(src => src.filename === source.filename) > -1"
-        :queuedIn="queuedIn.findIndex(src => src.filename === source.filename) > -1"
-        :queuedOut="queuedOut.findIndex(src => src.filename === source.filename) > -1"
+        :playing="playing.find((src) => src.filename === source.filename)"
+        :queuedIn="playing.length && startQueue.indexOf(index) > -1"
+        :queuedOut="endQueue.indexOf(index) > -1"
         :key="source.filename"
         @sampleClick="queueSample"
       />
@@ -17,11 +17,17 @@
 </template>
 
 <script>
+import Meyda from "meyda";
+import { MeydaAnalyzer } from "meyda/src/meyda-wa.js";
 import Background from "./Background";
 import Sample from "./Sample";
 import loadSources from "../application/load-sources";
 import { EventBus } from "../application/event-bus";
-import { WebAudioAPISound } from "../application/WebAudioApiSound"
+import { WebAudioAPISound, WebAudioAPISoundManager } from "../application/WebAudioApiSound"
+
+function createNewMeydaAnalyser(options) {
+  return new MeydaAnalyzer(options, Object.assign({}, Meyda));
+}
 
 let audioContext = null
 let timerWorker = null // The Web Worker used to fire timer messages
@@ -37,6 +43,8 @@ const scheduleAheadTime = 0.1 // How far ahead to schedule audio (sec)
 let nextNoteTime = 0.0 // when the next note is due.
 // and may or may not have played yet. {note, time}
 
+const sampleStore = {}
+
 export default {
   name: "Looper",
 
@@ -45,11 +53,8 @@ export default {
       loaded: false,
       counter: 0,
       sources: [],
-
-      queuedIn: [],
-      queuedOut: [],
-      samplesToPlay: [],
-      samplesPlaying: [],
+      startQueue: [],
+      endQueue: [],
       // baseUrl: 'https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/'
       baseUrl: '/loops/'
     };
@@ -60,28 +65,44 @@ export default {
     Sample
   },
 
+  computed: {
+    playing() {
+      const playing = [];
+      this.sources.forEach((source, index) => {
+        if (!source.playing) return false;
+        playing.push({...source, index });
+      });
+      return playing;
+    }
+  },
+
   async created() {
     audioContext = new window.AudioContext();
     timerWorker = new Worker('/metronome-worker.js')
 
     timerWorker.onmessage = e => {
       if (e.data === 'tick') {
-        // console.log('tick!')
         this.scheduler()
       }
     }
 
     timerWorker.postMessage({ interval: lookahead })
 
-    this.sources = await loadSources();
+    this.analyser = createNewMeydaAnalyser({
+      audioContext: WebAudioAPISoundManager.context,
+      source: WebAudioAPISoundManager.merger,
+      bufferSize: 256,
+      featureExtractors: ["rms", "energy", "buffer"]
+    });
+
+    this.$set(this, 'sources', await loadSources())
     this.loaded = true
   },
 
   methods: {
     startInterval() {
       if (!unlocked) {
-        // play silent buffer to unlock the audio
-
+        // Play silent buffer to unlock the audio
         var buffer = audioContext.createBuffer(1, 1, 22050)
         var node = audioContext.createBufferSource()
         node.buffer = buffer
@@ -92,7 +113,7 @@ export default {
       isPlaying = !isPlaying
 
       if (isPlaying) {
-        // start playing
+        // Start playing
         current16thNote = 0
         nextNoteTime = audioContext.currentTime
         timerWorker.postMessage('start')
@@ -104,7 +125,7 @@ export default {
     },
 
     scheduler() {
-      // while there are notes that will need to play before the next interval,
+      // While there are notes that will need to play before the next interval,
       // schedule them and advance the pointer.
       while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
         this.scheduleNote(current16thNote, nextNoteTime)
@@ -113,18 +134,26 @@ export default {
     },
 
     scheduleNote(beatNumber, time) {
-      const { samplesToPlay, baseUrl, queuedIn, queuedOut } = this
+      const { startQueue, endQueue } = this
 
       if (beatNumber % 64 === 0) {
-        for (let i = 0; i < samplesToPlay.length; ++i) {
-          const sample = new WebAudioAPISound(`${baseUrl}${samplesToPlay[i].filename}`)
-          sample.play({ time })
-          // sample.stop({ time: time + sampleLength })
+        for(let i=0; i < endQueue.length; ++i) {
+          this.stopSample(endQueue[i])
         }
 
-        queuedIn.splice(0, queuedIn.length)
-        queuedOut.splice(0, queuedOut.length)
-        this.samplesPlaying = samplesToPlay
+        // Don't destructure this.playing here because the
+        // computed property only recalculates upon access.
+        // We modify the data above in the endQueue loop.
+        for(let i=0; i < this.playing.length; ++i) {
+          this.startSample(this.playing[i].index, time)
+        }
+
+        for (let i = 0; i < startQueue.length; ++i) {
+          this.startSample(startQueue[i], time)
+        }
+
+        startQueue.splice(0, startQueue.length)
+        endQueue.splice(0, endQueue.length)
       }
 
       if (beatNumber % 4 === 0) {
@@ -145,144 +174,79 @@ export default {
     },
 
     queueSample(e) {
-      const { samplesToPlay, queuedIn, queuedOut } = this
-      const sample = e
-      const { filename, type } = sample
+      const filename = e.filename
+      const { endQueue, startQueue } = this;
+      const index = this.sources.findIndex(
+        source => source.filename === filename
+      );
 
-      if (!unlocked) {
-        samplesToPlay.push(sample)
-        this.startInterval()
-        
-        return
+      if (!this.playing.length) {
+        this.startInterval();
       }
 
-      // if exact sample playing = queue out
-      // if sample of same type playing = queue same type out, queue new in
+      if (index > -1) {
+        const type = this.sources[index].type;
+        const existingTypePlaying = this.playing.find(src => src.type === type);
+        const existingTypesQueued = startQueue.reduce(
+          (arr, sourceIndex, index) => {
+            if (this.sources[sourceIndex].type === type) arr.push(index);
+            return arr;
+          },
+          []
+        );
+        const existingTypeQueued = !!existingTypesQueued.length;
 
-      const stpIndex = samplesToPlay.findIndex(item => item.filename === filename)
-      const typeIndex = samplesToPlay.findIndex(item => item.type === type)
+        if (startQueue.indexOf(index) > -1) {
+          startQueue.splice(startQueue.indexOf(index), 1);
+        } else if (
+          this.sources[index].playing &&
+          endQueue.indexOf(index) > -1
+        ) {
+          endQueue.splice(endQueue.indexOf(index), 1);
+          if (existingTypeQueued) {
+            startQueue.splice(startQueue.indexOf(index), 1);
+          }
+        } else if (this.sources[index].playing) {
+          endQueue.push(index);
+        } else {
+          if (existingTypePlaying) {
+            endQueue.push(existingTypePlaying.index);
+          }
 
-      if (stpIndex > -1) {
-        const qiIndex = queuedIn.findIndex(item => item.filename === filename)
+          if (existingTypeQueued) {
+            existingTypesQueued.forEach(index => {
+              startQueue.splice(index, 1);
+            });
+          }
 
-        if (qiIndex > -1) {
-          queuedIn.splice(qiIndex, 1)
+          startQueue.push(index);
         }
-        
-        samplesToPlay.splice(stpIndex, 1)
-        queuedOut.push(sample)
-      } 
-      
-      if (typeIndex > -1) {
-        queuedOut.push(samplesToPlay[typeIndex])
-        samplesToPlay.splice(typeIndex, 1)
-        // samplesToPlay.push(sample)
-      } 
-      
-      
-      const qoIndex = queuedOut.findIndex(item => item.filename === filename)
+      }
+    },
 
-      if (qoIndex > -1) {
-        queuedOut.splice(qoIndex, 1)
+    startSample(index, time) {
+      const { baseUrl } = this
+      const filename = this.sources[index].filename
+      this.sources[index].playing = true;
+      const sample = new WebAudioAPISound(`${baseUrl}${filename}`)
+
+      sample.play({ time })
+
+      this.sources[index].analyser = this.analyser
+
+      if (sampleStore[filename]) {
+        delete sampleStore[filename]
       }
 
-      queuedIn.push(sample)
-      samplesToPlay.push(sample)
+      sampleStore[filename] = sample
+    },
+
+    stopSample(index) {
+      this.sources[index].playing = false;
+
+      // delete this.sources[index].analyser;
+      // this.sources[index].analyser = null;
     }
-
-    // loop() {
-    //   EventBus.$emit("loop", this.counter);
-    //   const { startQueue, endQueue, startSample, stopSample } = this;
-
-    //   if (!this.playing.length) {
-    //     if (this.interval) {
-    //       clearDriftless(this.interval);
-    //     }
-    //     this.counter = 16;
-    //   } else if (this.counter < 63) {
-    //     this.counter++;
-    //   } else {
-    //     this.counter = 0;
-    //   }
-
-    //   if (this.counter % 16 === 0) {
-    //     for (let i = 0; i < endQueue.length; i++) {
-    //       stopSample(endQueue[i]);
-    //     }
-    //     this.endQueue = [];
-
-    //     for (let i = 0; i < startQueue.length; i++) {
-    //       startSample(startQueue[i]);
-    //     }
-    //     this.startQueue = [];
-    //   }
-
-    //   this.startClasses = this.startQueue;
-    //   this.endClasses = this.endQueue;
-    // },
-
-    // queueSample(filename) {
-    //   const { endQueue, startQueue } = this;
-    //   const index = this.sources.findIndex(
-    //     source => source.filename === filename
-    //   );
-
-    //   if (!this.playing.length) {
-    //     this.startInterval();
-    //   }
-
-    //   if (index > -1) {
-    //     const type = this.sources[index].type;
-    //     const existingTypePlaying = this.playing.find(src => src.type === type);
-    //     const existingTypesQueued = startQueue.reduce(
-    //       (arr, sourceIndex, index) => {
-    //         if (this.sources[sourceIndex].type === type) arr.push(index);
-    //         return arr;
-    //       },
-    //       []
-    //     );
-    //     const existingTypeQueued = !!existingTypesQueued.length;
-
-    //     if (startQueue.indexOf(index) > -1) {
-    //       startQueue.splice(startQueue.indexOf(index), 1);
-    //     } else if (
-    //       this.sources[index].playing &&
-    //       endQueue.indexOf(index) > -1
-    //     ) {
-    //       endQueue.splice(endQueue.indexOf(index), 1);
-    //       if (existingTypeQueued) {
-    //         startQueue.splice(startQueue.indexOf(index), 1);
-    //       }
-    //     } else if (this.sources[index].playing) {
-    //       endQueue.push(index);
-    //     } else {
-    //       if (existingTypePlaying) {
-    //         endQueue.push(existingTypePlaying.index);
-    //       }
-
-    //       if (existingTypeQueued) {
-    //         existingTypesQueued.forEach(index => {
-    //           startQueue.splice(index, 1);
-    //         });
-    //       }
-
-    //       startQueue.push(index);
-    //     }
-    //   }
-    // },
-
-    // startSample(index) {
-    //   this.sources[index].playing = true;
-    //   this.sources[index].sound.play();
-    // },
-
-    // stopSample(index) {
-    //   this.sources[index].playing = false;
-    //   this.sources[index].sound.stop();
-
-    //   // delete this.sources[index].analyser;
-    //   // this.sources[index].analyser = null;
-    // }
   }
 };
 </script>

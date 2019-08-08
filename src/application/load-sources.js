@@ -1,10 +1,4 @@
-// import Meyda from "meyda";
-// import { MeydaAnalyzer } from "meyda/src/meyda-wa.js";
 import { WebAudioAPISound } from "../application/WebAudioApiSound"
-
-// function createNewMeydaAnalyser(options) {
-//   return new MeydaAnalyzer(options, Object.assign({}, Meyda));
-// }
 
 const baseUrl = "/loops/";
 // const baseUrl = "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/";
@@ -58,7 +52,8 @@ function makeSource(filename, type) {
 
     resolve({
       filename,
-      type: types[type]
+      type: types[type],
+      playing: false
     })
     
     // const sound = new Howl({

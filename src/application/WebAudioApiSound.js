@@ -5,13 +5,15 @@ try {
   throw new Error('No Web Audio API support')
 }
 
-const WebAudioAPISoundManager = function(context) {
+const webAudioAPISoundManager = function(context) {
   this.context = context
   this.bufferList = {}
   this.playingSounds = {}
+  this.merger = this.context.createChannelMerger(1)
+  this.merger.connect(this.context.destination)
 }
 
-WebAudioAPISoundManager.prototype = {
+webAudioAPISoundManager.prototype = {
   addSound: function(url, loadCallback) {
     // Load buffer asynchronously
     var request = new XMLHttpRequest()
@@ -57,11 +59,16 @@ WebAudioAPISoundManager.prototype = {
   }
 }
 
+
+
+const WebAudioAPISoundManager = new webAudioAPISoundManager(window.audioContext)
+window.webAudioAPISoundManager = WebAudioAPISoundManager
+
 const WebAudioAPISound = function(url, loadCallback) {
   this.url = url
   window.webAudioAPISoundManager =
     window.webAudioAPISoundManager ||
-    new WebAudioAPISoundManager(window.audioContext)
+    new webAudioAPISoundManager(window.audioContext)
   this.manager = window.webAudioAPISoundManager
   this.manager.addSound(this.url, loadCallback)
 }
@@ -105,9 +112,10 @@ WebAudioAPISound.prototype = {
     gainNode.gain.value = this.settings.volume
     source.buffer = buffer
     source.connect(gainNode)
-    gainNode.connect(this.manager.context.destination)
+    this.source = source
+    gainNode.connect(this.manager.merger)
     return source
   }
 }
 
-export { WebAudioAPISound }
+export { WebAudioAPISound, WebAudioAPISoundManager }
