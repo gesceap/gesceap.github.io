@@ -19,9 +19,9 @@ Project files are in `/project`.
 
 Be sure to `cd` into the `/project` folder before starting development.
 
-Install with `yarn`
-Develop with `yarn run serve`
-Build with `yarn run build`
+Install with `yarn`  
+Develop with `yarn run serve`  
+Build with `yarn run build`  
 
 Built files exist within the root of the repo.
 Builds are **not** cleaned on each run due to the GitHub pages configuration, so be sure to check for duplicate or overlapping assets etc.
