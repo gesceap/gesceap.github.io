@@ -1,7 +1,13 @@
 <template>
   <button
-    :class="{ sample: true, playing: playingClass, queuedIn: queuedInClass, queuedOut: queuedOutClass }"
+    :class="{
+      sample: true,
+      playing: playingClass,
+      queuedIn: queuedInClass,
+      queuedOut: queuedOutClass
+    }"
     @click="emitClick"
+    :name="source.name"
   ></button>
 </template>
 
@@ -107,5 +113,3 @@ export default {
   }
 }
 </style>
-
-

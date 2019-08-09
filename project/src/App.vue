@@ -1,24 +1,48 @@
 <template>
   <div id="app">
-    <Looper/>
+    <Looper />
     <div id="sm">
-      <a href="https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q" target="_blank" rel="noopener noreferrer">
-        <img alt="YouTube" src="/img/yt.png">
+      <a
+        href="https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="YouTube" src="/img/yt.png" />
       </a>
-      <a href="https://www.facebook.com/gesceap/" target="_blank" rel="noopener noreferrer">
-        <img alt="Facebook" src="/img/fb.png">
+      <a
+        href="https://www.facebook.com/gesceap/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="Facebook" src="/img/fb.png" />
       </a>
-      <a href="https://twitter.com/gesceap_" target="_blank" rel="noopener noreferrer">
-        <img alt="Twitter" src="/img/tw.png">
+      <a
+        href="https://twitter.com/gesceap_"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="Twitter" src="/img/tw.png" />
       </a>
-      <a href="https://gesceap.bandcamp.com" target="_blank" rel="noopener noreferrer">
-        <img alt="Bandcamp" src="/img/bc.png">
+      <a
+        href="https://gesceap.bandcamp.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="Bandcamp" src="/img/bc.png" />
       </a>
-      <a href="https://github.com/gesceap" target="_blank" rel="noopener noreferrer">
-        <img alt="GitHub" src="/img/gh.png">
+      <a
+        href="https://github.com/gesceap"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="GitHub" src="/img/gh.png" />
       </a>
-      <a href="https://soundcloud.com/gesceap" target="_blank" rel="noopener noreferrer">
-        <img alt="SoundCloud" src="/img/sc.png">
+      <a
+        href="https://soundcloud.com/gesceap"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img alt="SoundCloud" src="/img/sc.png" />
       </a>
     </div>
   </div>
@@ -33,6 +57,7 @@ export default {
     Looper
   },
   created() {
+    //eslint-disable-next-line
     console.log('%c2xAA (https://wray.pro)', 'background-image: linear-gradient(to left, #c30083, #0623c8); color: #ffffff; padding: 5px 20px;');
   }
 };

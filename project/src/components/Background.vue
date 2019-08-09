@@ -40,8 +40,7 @@ export default {
       }
     });
 
-    this.noise = new OpenSimplexNoise('prime16' + Date.now())
-
+    this.noise = new OpenSimplexNoise("prime16" + Date.now());
 
     this.raf = requestAnimationFrame(this.loop);
   },
@@ -66,7 +65,6 @@ export default {
       context.drawImage(canvas, -8, -8, width + 16, height + 16);
 
       const n = noise.noise2D(delta / 500, delta / 1064);
-      
 
       context.drawImage(
         canvas,
@@ -124,10 +122,7 @@ export default {
 
     resize() {
       const { canvas } = this.$refs;
-      const {
-        innerWidth: width,
-        innerHeight: height,
-      } = window;
+      const { innerWidth: width, innerHeight: height } = window;
 
       const { dpr } = this;
 
