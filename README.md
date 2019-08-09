@@ -23,5 +23,5 @@ Install with `yarn`
 Develop with `yarn run serve`  
 Build with `yarn run build`  
 
-Built files exist within the root of the repo.
+Built files exist within the root of the repo.  
 Builds are **not** cleaned on each run due to the GitHub pages configuration, so be sure to check for duplicate or overlapping assets etc.
