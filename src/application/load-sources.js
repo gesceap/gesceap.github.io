@@ -1,12 +1,8 @@
-import { Howl, Howler } from "howler";
-import Meyda from "meyda";
-import { MeydaAnalyzer } from "meyda/src/meyda-wa.js";
+import { WebAudioAPISound } from "../application/WebAudioApiSound"
 
-function createNewMeydaAnalyser(options) {
-  return new MeydaAnalyzer(options, Object.assign({}, Meyda));
-}
+const baseUrl = "/loops/";
+// const baseUrl = "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/";
 
-const urlBase = "/loops/";
 const files = [
   "Lecwd04-loops-r1-edited.wav",
   "Inspo01-loops-r2-edited.wav",
@@ -31,33 +27,58 @@ const files = [
 
 const types = ["r", "b", "s", "d"];
 
+function loadSound(url) {
+  return new Promise((resolve, reject) => {
+    // var request = new XMLHttpRequest();
+    // request.open('GET', url, true);
+    // request.responseType = 'arraybuffer';
+
+    // // Decode asynchronously
+    // request.onload = function() {
+    //   resolve()
+    // }
+
+    // request.send();
+
+    new WebAudioAPISound(url, resolve)
+  })
+}
+
 function makeSource(filename, type) {
-  return new Promise((resolve) => {
-    const url = `${urlBase}${filename}`;
+  return new Promise(async (resolve) => {
+    const url = `${baseUrl}${filename}`;
+
+    await loadSound(url)
+
+    resolve({
+      filename,
+      type: types[type],
+      playing: false
+    })
     
-    const sound = new Howl({
-      preload: true,
-      src: url,
-      loop: true,
-      onload() {
-        const analyser = createNewMeydaAnalyser({
-          audioContext: Howler.ctx,
-          source: sound._sounds[0]._node,
-          bufferSize: 256,
-          featureExtractors: ["rms", "energy", "buffer"]
-        });
+    // const sound = new Howl({
+    //   preload: true,
+    //   src: url,
+    //   loop: true,
+    //   onload() {
+    //     const analyser = createNewMeydaAnalyser({
+    //       audioContext: Howler.ctx,
+    //       source: sound._sounds[0]._node,
+    //       bufferSize: 256,
+    //       featureExtractors: ["rms", "energy", "buffer"]
+    //     });
 
-        analyser.start();
+    //     analyser.start();
 
-        resolve({
-          filename,
-          playing: false,
-          sound,
-          type: types[type],
-          analyser
-        });
-      }
-    });
+    //     resolve({
+    //       filename,
+    //       playing: false,
+    //       sound,
+    //       type: types[type],
+    //       analyser
+    //     });
+    //   }
+    // });
   });
 }
 

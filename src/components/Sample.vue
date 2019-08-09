@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     emitClick() {
-      this.$emit("sampleClick", this.source.filename);
+      this.$emit("sampleClick", this.source);
       this.handleClasses();
     },
     handleClasses(count = 0) {
@@ -88,11 +88,11 @@ export default {
     transition: transform 85ms;
   }
 
-  /* &.playing {
+  &.playing {
     animation-duration: 461.538461538ms;
     animation-name: beat;
     animation-iteration-count: infinite;
-  } */
+  }
 
   &.queuedIn {
     animation-duration: 461.538461538ms;
