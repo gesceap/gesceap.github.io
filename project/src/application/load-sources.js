@@ -1,7 +1,7 @@
-import { WebAudioAPISound } from "../application/WebAudioApiSound"
+import { WebAudioAPISound } from "../application/WebAudioApiSound";
 
 const baseUrl = "/loops/";
-// const baseUrl = "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/";
+// const baseUrl = "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/"
 
 const files = [
   "Lecwd04-loops-r1-edited.wav",
@@ -25,60 +25,48 @@ const files = [
   "Fastfood-loops-d4-edited.wav"
 ];
 
+const names = [
+  "Rhythm 1",
+  "Rhythm 2",
+  "Rhythm 3",
+  "Rhythm 4",
+
+  "Bass 1",
+  "Bass 2",
+  "Bass 3",
+  "Bass 4",
+
+  "Synth 1",
+  "Synth 2",
+  "Synth 3",
+  "Synth 4",
+
+  "Drum 1",
+  "Drum 2",
+  "Drum 3",
+  "Drum 4"
+];
+
 const types = ["r", "b", "s", "d"];
 
 function loadSound(url) {
-  return new Promise((resolve, reject) => {
-    // var request = new XMLHttpRequest();
-    // request.open('GET', url, true);
-    // request.responseType = 'arraybuffer';
-
-    // // Decode asynchronously
-    // request.onload = function() {
-    //   resolve()
-    // }
-
-    // request.send();
-
-    new WebAudioAPISound(url, resolve)
-  })
+  return new Promise(resolve => {
+    new WebAudioAPISound(url, resolve);
+  });
 }
 
-function makeSource(filename, type) {
-  return new Promise(async (resolve) => {
+function makeSource(filename, type, name) {
+  return new Promise(async resolve => {
     const url = `${baseUrl}${filename}`;
 
-    await loadSound(url)
+    await loadSound(url);
 
     resolve({
       filename,
+      name,
       type: types[type],
       playing: false
-    })
-    
-    // const sound = new Howl({
-    //   preload: true,
-    //   src: url,
-    //   loop: true,
-    //   onload() {
-    //     const analyser = createNewMeydaAnalyser({
-    //       audioContext: Howler.ctx,
-    //       source: sound._sounds[0]._node,
-    //       bufferSize: 256,
-    //       featureExtractors: ["rms", "energy", "buffer"]
-    //     });
-
-    //     analyser.start();
-
-    //     resolve({
-    //       filename,
-    //       playing: false,
-    //       sound,
-    //       type: types[type],
-    //       analyser
-    //     });
-    //   }
-    // });
+    });
   });
 }
 
@@ -86,8 +74,11 @@ export default async function loadSources() {
   let type = -1;
   const sources = await Promise.all(
     files.map((filename, i) => {
-      if (i % 4 === 0) type++;
-      return makeSource(filename, type);
+      if (i % 4 === 0) {
+        type++;
+      }
+
+      return makeSource(filename, type, names[i]);
     })
   );
 
