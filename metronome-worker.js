@@ -1,29 +1,29 @@
 /* eslint-env Worker */
 
-let timerID = null
-let interval = 100
+let timerID = null;
+let interval = 100;
 
 onmessage = function(e) {
-  if (e.data === 'start') {
+  if (e.data === "start") {
     // console.log('starting')
     timerID = setInterval(function() {
-      postMessage('tick')
-    }, interval)
+      postMessage("tick");
+    }, interval);
   } else if (e.data.interval) {
     // console.log('setting interval')
-    interval = e.data.interval
+    interval = e.data.interval;
     // console.log('interval=' + interval)
     if (timerID) {
-      clearInterval(timerID)
+      clearInterval(timerID);
       timerID = setInterval(function() {
-        postMessage('tick')
-      }, interval)
+        postMessage("tick");
+      }, interval);
     }
-  } else if (e.data === 'stop') {
+  } else if (e.data === "stop") {
     // console.log('stopping')
-    clearInterval(timerID)
-    timerID = null
+    clearInterval(timerID);
+    timerID = null;
   }
-}
+};
 
 // postMessage('hi there')
