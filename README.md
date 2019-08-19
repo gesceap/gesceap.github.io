@@ -9,7 +9,7 @@ Old English : "[Gesceap](https://en.wiktionary.org/wiki/gesceap)" ; (“shape, n
 * Bandcamp : https://gesceap.bandcamp.com
 * Facebook : https://www.facebook.com/gesceap
 * Youtube : https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q
-* Twitter : https://twitter.com/gesceap_
+* Twitter : [https://twitter.com/gesceap_](https://twitter.com/gesceap_)
 * Github : https://github.com/gesceap
 * Soundcloud : https://soundcloud.com/gesceap
 * Contact Email : gesceapmusic@gmail.com

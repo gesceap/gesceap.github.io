@@ -6,8 +6,9 @@
 import OpenSimplexNoise from "open-simplex-noise";
 import { EventBus } from "../application/event-bus";
 import animations from "../application/animations";
+
 export default {
-  props: ["sources", "playing"],
+  props: ["sources", "playing", "stopAnimating"],
 
   data() {
     return {
@@ -40,8 +41,7 @@ export default {
       }
     });
 
-    this.noise = new OpenSimplexNoise('prime16' + Date.now())
-
+    this.noise = new OpenSimplexNoise("prime16" + Date.now());
 
     this.raf = requestAnimationFrame(this.loop);
   },
@@ -56,7 +56,8 @@ export default {
         squareSize,
         marginSize,
         tick,
-        noise
+        noise,
+        stopAnimating
       } = this;
 
       const { canvas } = context;
@@ -66,7 +67,6 @@ export default {
       context.drawImage(canvas, -8, -8, width + 16, height + 16);
 
       const n = noise.noise2D(delta / 500, delta / 1064);
-      
 
       context.drawImage(
         canvas,
@@ -111,7 +111,8 @@ export default {
             squareSize,
             tick,
             dpr,
-            features
+            features,
+            stopAnimating
           });
           context.restore();
         } else {
@@ -124,12 +125,12 @@ export default {
 
     resize() {
       const { canvas } = this.$refs;
-      const {
-        innerWidth: width,
-        innerHeight: height,
-      } = window;
+      const { innerWidth: width, innerHeight: height } = window;
 
       const { dpr } = this;
+
+      this.squareSize = document.querySelector(".sample").clientWidth;
+      this.maxSize = document.querySelector(".looper").clientWidth;
 
       canvas.width = width * dpr;
       canvas.height = height * dpr;
