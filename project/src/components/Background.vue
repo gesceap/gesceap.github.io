@@ -64,18 +64,22 @@ export default {
       const { width, height } = canvas;
       const delta = time / 2;
 
-      context.drawImage(canvas, -8, -8, width + 16, height + 16);
+      if (!stopAnimating) {
+        context.drawImage(canvas, -8, -8, width + 16, height + 16);
+      }
 
       const n = noise.noise2D(delta / 500, delta / 1064);
 
-      context.drawImage(
-        canvas,
-        n,
-        Math.sin(delta / 5000 + 5 * Math.sin(n / 500)) * 10 -
-          Math.cos(delta / 500),
-        width + 20 * n + Math.sin(delta / 500),
-        height + 20 * Math.cos(n / 600 + 2 * Math.sin(delta / 500))
-      );
+      if (!stopAnimating) {
+        context.drawImage(
+          canvas,
+          n,
+          Math.sin(delta / 5000 + 5 * Math.sin(n / 500)) * 10 -
+            Math.cos(delta / 500),
+          width + 20 * n + Math.sin(delta / 500),
+          height + 20 * Math.cos(n / 600 + 2 * Math.sin(delta / 500))
+        );
+      }
 
       context.fillStyle = "rgba(0,0,0,0.5)";
       context.fillRect(0, 0, width, height);
