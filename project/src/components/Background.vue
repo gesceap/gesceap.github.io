@@ -6,8 +6,9 @@
 import OpenSimplexNoise from "open-simplex-noise";
 import { EventBus } from "../application/event-bus";
 import animations from "../application/animations";
+
 export default {
-  props: ["sources", "playing"],
+  props: ["sources", "playing", "stopAnimating"],
 
   data() {
     return {
@@ -55,7 +56,8 @@ export default {
         squareSize,
         marginSize,
         tick,
-        noise
+        noise,
+        stopAnimating
       } = this;
 
       const { canvas } = context;
@@ -109,7 +111,8 @@ export default {
             squareSize,
             tick,
             dpr,
-            features
+            features,
+            stopAnimating
           });
           context.restore();
         } else {
@@ -125,6 +128,9 @@ export default {
       const { innerWidth: width, innerHeight: height } = window;
 
       const { dpr } = this;
+
+      this.squareSize = document.querySelector(".sample").clientWidth;
+      this.maxSize = document.querySelector(".looper").clientWidth;
 
       canvas.width = width * dpr;
       canvas.height = height * dpr;

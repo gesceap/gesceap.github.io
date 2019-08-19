@@ -62,245 +62,46 @@ function mysticRose({ context, numPoints, width, height, dpr }) {
 const margin1 = 10.5;
 const margin2 = 20;
 
-export default {
-  0: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
+const drawingFunctions = {};
+const numberOfSquares = 16;
+
+for (let i = 0; i < numberOfSquares; ++i) {
+  drawingFunctions[i] = {
+    draw: ({
+      context,
+      delta,
+      x,
+      y,
+      squareSize,
+      dpr,
+      features: { energy },
+      stopAnimating
+    }) => {
       context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
+      let width;
+      let height;
+
+      if (stopAnimating) {
+        context.translate(x + margin1, y + margin1);
+        width = squareSize - margin2;
+        height = squareSize - margin2;
+      } else {
+        context.translate(x + margin1 - energy, y + margin1 - energy);
+        width = squareSize - margin2 + energy * 2;
+        height = squareSize - margin2 + energy * 2;
+      }
+
       mysticRose({
         delta,
         context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
+        width,
+        height,
         dpr,
-        numPoints: 2
+        numPoints: 2 + i
       });
       context.restore();
     }
-  },
-  1: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 3
-      });
-      context.restore();
-    }
-  },
-  2: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 4
-      });
-      context.restore();
-    }
-  },
-  3: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 5
-      });
-      context.restore();
-    }
-  },
-  4: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 6
-      });
-      context.restore();
-    }
-  },
-  5: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 7
-      });
-      context.restore();
-    }
-  },
-  6: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 8
-      });
-      context.restore();
-    }
-  },
-  7: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 9
-      });
-      context.restore();
-    }
-  },
-  8: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 10
-      });
-      context.restore();
-    }
-  },
-  9: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 11
-      });
-      context.restore();
-    }
-  },
-  10: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 12
-      });
-      context.restore();
-    }
-  },
-  11: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 13
-      });
-      context.restore();
-    }
-  },
-  12: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 14
-      });
-      context.restore();
-    }
-  },
-  13: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 15
-      });
-      context.restore();
-    }
-  },
-  14: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 16
-      });
-      context.restore();
-    }
-  },
-  15: {
-    draw({ context, delta, x, y, squareSize, dpr, features: { energy } }) {
-      context.save();
-      context.translate(x + margin1 - energy, y + margin1 - energy);
-      mysticRose({
-        delta,
-        context,
-        width: squareSize - margin2 + energy * 2,
-        height: squareSize - margin2 + energy * 2,
-        dpr,
-        numPoints: 17
-      });
-      context.restore();
-    }
-  }
-};
+  };
+}
+
+export default drawingFunctions;

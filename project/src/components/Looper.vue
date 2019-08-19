@@ -1,17 +1,24 @@
 <template>
   <main>
-    <Background :playing="playing" :sources="sources" />
+    <Background
+      :playing="playing"
+      :sources="sources"
+      :stop-animating="stopAnimating"
+      v-if="loaded"
+    />
     <div class="loading" v-if="!loaded">Loading 19.2MB please wait</div>
-    <div class="looper" v-else>
-      <Sample
-        v-for="(source, index) in showSources"
-        :source="source"
-        :playing="playing.find(src => src.filename === source.filename)"
-        :queuedIn="playing.length && startQueue.indexOf(index) > -1"
-        :queuedOut="endQueue.indexOf(index) > -1"
-        :key="source.filename"
-        @sampleClick="queueSample"
-      />
+    <div class="square" v-else>
+      <div class="looper">
+        <Sample
+          v-for="(source, index) in showSources"
+          :source="source"
+          :playing="playing.find(src => src.filename === source.filename)"
+          :queuedIn="playing.length && startQueue.indexOf(index) > -1"
+          :queuedOut="endQueue.indexOf(index) > -1"
+          :key="source.filename"
+          @sampleClick="queueSample"
+        />
+      </div>
     </div>
   </main>
 </template>
@@ -58,6 +65,7 @@ export default {
       showSources: [],
       startQueue: [],
       endQueue: [],
+      stopAnimating: false,
       // baseUrl: "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/"
       baseUrl: "/loops/"
     };
@@ -109,6 +117,10 @@ export default {
       this.showSources.push(this.sources[i]);
       await sleep(100);
     }
+
+    window.toggleAnimating = () => {
+      this.stopAnimating = !this.stopAnimating;
+    };
   },
 
   methods: {
@@ -257,6 +269,11 @@ export default {
 <style lang="scss" scoped>
 main {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .loading {
@@ -270,17 +287,32 @@ main {
 }
 
 .looper {
-  position: relative;
+  position: absolute;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 2px;
-  grid-auto-rows: minmax(50px, 24.7%);
+  grid-auto-rows: minmax(auto, 24.7%);
 
-  width: 546px;
-  height: 546px;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 h1 {
   color: #fff;
+}
+
+.square {
+  width: 60vw;
+  max-width: 70vh;
+  display: flex;
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
 }
 </style>

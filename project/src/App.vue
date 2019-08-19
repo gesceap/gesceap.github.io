@@ -66,7 +66,7 @@ export default {
 <style>
 html,
 body {
-  background-color: #2c2c2c;
+  background-color: #000;
   height: 100%;
   margin: 0;
 }
