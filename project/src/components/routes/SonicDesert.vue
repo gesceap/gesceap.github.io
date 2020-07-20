@@ -14,6 +14,7 @@
       <video
         src="~../../../assets/sonic-desert/background.mp4"
         autoplay
+        loop
         muted
       ></video>
     </div>
