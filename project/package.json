@@ -15,7 +15,8 @@
     "node-sass": "^4.12.0",
     "open-simplex-noise": "^1.6.0",
     "sass-loader": "^7.1.0",
-    "vue": "^2.5.22"
+    "vue": "^2.5.22",
+    "vue-router": "^3.3.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.6.0",

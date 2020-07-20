@@ -123,6 +123,12 @@ export default {
     };
   },
 
+  beforeDestroy() {
+    for (let i = 0; i < 16; i += 1) {
+      this.stopSample(i);
+    }
+  },
+
   methods: {
     startInterval() {
       isPlaying = !isPlaying;
