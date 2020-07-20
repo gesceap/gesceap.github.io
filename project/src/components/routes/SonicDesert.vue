@@ -5,7 +5,7 @@
       <source src="~../../../assets/sonic-desert/wind.ogg" type="audio/ogg" />
     </audio>
 
-    <audio preload ref="track">
+    <audio preload ref="track" @ended="trackEnded">
       <source src="~../../../assets/sonic-desert/track.mp3" type="audio/mp3" />
       <source src="~../../../assets/sonic-desert/track.ogg" type="audio/ogg" />
     </audio>
@@ -48,6 +48,11 @@ export default {
         await this.$refs.wind.play();
         await this.$refs.track.pause();
       }
+    },
+
+    async trackEnded() {
+      this.$refs.track.currentTime = 0;
+      this.clickRose();
     }
   }
 };
