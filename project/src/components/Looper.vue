@@ -172,7 +172,7 @@ export default {
           this.stopSample(endQueue[i]);
         }
 
-        // Don"t destructure this.playing here because the
+        // Don't destructure this.playing here because the
         // computed property only recalculates upon access.
         // We modify the data above in the endQueue loop.
         for (let i = 0; i < this.playing.length; ++i) {
