@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Looper />
+    <RouterView v-if="webaudioShieldAccepted" />
+
     <div id="sm">
       <a
         href="https://www.youtube.com/channel/UChvIb5lU1CswBTno6BCGG4Q"
@@ -45,20 +46,30 @@
         <img alt="SoundCloud" src="/img/sc.png" />
       </a>
     </div>
+
+    <div v-if="!webaudioShieldAccepted" class="web-audio-sheild">
+      <button @click="clickBegin">Begin</button>
+    </div>
   </div>
 </template>
 
 <script>
-import Looper from "./components/Looper";
-
 export default {
-  name: "App",
-  components: {
-    Looper
-  },
   created() {
     //eslint-disable-next-line
     console.log('%c2xAA (https://wray.pro)', 'background-image: linear-gradient(to left, #c30083, #0623c8); color: #ffffff; padding: 5px 20px;');
+  },
+
+  data() {
+    return {
+      webaudioShieldAccepted: false
+    };
+  },
+
+  methods: {
+    clickBegin() {
+      this.webaudioShieldAccepted = true;
+    }
   }
 };
 </script>
@@ -89,5 +100,20 @@ body {
   width: 50px;
   height: 50px;
   margin: 5px;
+}
+
+.web-audio-sheild {
+  background-color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
