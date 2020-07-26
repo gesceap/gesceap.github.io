@@ -116,7 +116,4 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-.web-audio-sheild button {
-}
 </style>
