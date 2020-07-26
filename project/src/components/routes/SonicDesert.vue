@@ -34,7 +34,8 @@
 export default {
   data() {
     return {
-      trackPlaying: false
+      trackPlaying: false,
+      prime16Timer: null
     };
   },
 
@@ -45,6 +46,11 @@ export default {
       if (this.trackPlaying) {
         await this.$refs.wind.pause();
         await this.$refs.track.play();
+
+        if (this.prime16Timer) {
+          clearTimeout(this.prime16Timer);
+          this.prime16Timer = null;
+        }
       } else {
         await this.$refs.wind.play();
         await this.$refs.track.pause();
@@ -52,8 +58,16 @@ export default {
     },
 
     async trackEnded() {
+      // reset track to the start
       this.$refs.track.currentTime = 0;
+      // play the noise loop and update track playing state
       this.clickRose();
+
+      // 5 second timeout to redirect to prime16 after the track plays
+      // clicking the rose again will cancel this timeout
+      setTimeout(() => {
+        this.$router.push("/prime16");
+      }, 1000 * 5);
     }
   }
 };
