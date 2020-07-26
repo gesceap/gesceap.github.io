@@ -20,7 +20,7 @@
     </div>
 
     <div class="foreground-container">
-      <button @click="clickRose">
+      <button @click="clickRose" aria-label="Play/Pause">
         <img
           src="~../../../assets/sonic-desert/mystic-rose.png"
           alt="Mystic Rose"
