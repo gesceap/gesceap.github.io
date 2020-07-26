@@ -4,6 +4,7 @@ import App from "./App.vue";
 import routes from "./routes";
 
 const router = new VueRouter({
+  mode: "history", // use "real" paths instead of hash URLs
   routes
 });
 
