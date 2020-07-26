@@ -40,19 +40,6 @@ function createNewMeydaAnalyser(options) {
 }
 
 let audioContext = null;
-let timerWorker = null; // The Web Worker used to fire timer messages
-const lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
-
-let isPlaying = false; // Are we currently playing?
-let current16thNote; // What note is currently last scheduled?
-let tempo = 130.0; // tempo (in beats per minute)
-const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
-// This is calculated from lookahead, and overlaps
-// with next interval (in case the timer is late)
-let nextNoteTime = 0.0; // when the next note is due.
-// and may or may not have played yet. {note, time}
-
-const sampleStore = {};
 
 export default {
   name: "Looper",
@@ -67,7 +54,20 @@ export default {
       endQueue: [],
       stopAnimating: false,
       // baseUrl: "https://rawcdn.githack.com/gesceap/gesceap.github.io/bc839d84392ea15264a9e6485762b9072d66d9e5/public/loops/"
-      baseUrl: "/loops/"
+      baseUrl: "/loops/",
+
+      timerWorker: null, // The Web Worker used to fire timer messages
+      sampleStore: {},
+
+      lookahead: 25.0, // How frequently to call scheduling function (in milliseconds)
+      isPlaying: false,
+      current16thNote: null, // What note is currently last scheduled?,
+      tempo: 130.0, // tempo (in beats per minute)
+      scheduleAheadTime: 0.1, // How far ahead to schedule audio (sec)
+      // This is calculated from lookahead, and overlaps
+      // with next interval (in case the timer is late)
+      nextNoteTime: 0.0 // when the next note is due.
+      // and may or may not have played yet. {note, time}
     };
   },
 
@@ -89,15 +89,15 @@ export default {
 
   async created() {
     audioContext = WebAudioAPISoundManager.context;
-    timerWorker = new Worker("/metronome-worker.js");
+    this.timerWorker = new Worker("/metronome-worker.js");
 
-    timerWorker.onmessage = e => {
+    this.timerWorker.onmessage = e => {
       if (e.data === "tick") {
         this.scheduler();
       }
     };
 
-    timerWorker.postMessage({ interval: lookahead });
+    this.timerWorker.postMessage({ interval: this.lookahead });
 
     this.analyser = createNewMeydaAnalyser({
       audioContext: WebAudioAPISoundManager.context,
@@ -105,6 +105,8 @@ export default {
       bufferSize: 256,
       featureExtractors: ["rms", "energy", "buffer"]
     });
+
+    WebAudioAPISoundManager.bufferList = {};
 
     this.$set(this, "sources", await loadSources());
     this.loaded = true;
@@ -125,22 +127,27 @@ export default {
 
   beforeDestroy() {
     for (let i = 0; i < 16; i += 1) {
-      this.stopSample(i);
+      WebAudioAPISoundManager.stopSoundWithUrl(
+        `${this.baseUrl}${this.sources[i].filename}`
+      );
     }
+
+    this.timerWorker.postMessage("stop");
+    this.timerWorker.terminate();
   },
 
   methods: {
     startInterval() {
-      isPlaying = !isPlaying;
+      this.isPlaying = !this.isPlaying;
 
-      if (isPlaying) {
+      if (this.isPlaying) {
         // Start playing
-        current16thNote = 0;
-        nextNoteTime = audioContext.currentTime;
-        timerWorker.postMessage("start");
+        this.current16thNote = 0;
+        this.nextNoteTime = audioContext.currentTime;
+        this.timerWorker.postMessage("start");
         return "stop";
       } else {
-        timerWorker.postMessage("stop");
+        this.timerWorker.postMessage("stop");
         return "play";
       }
     },
@@ -148,8 +155,11 @@ export default {
     scheduler() {
       // While there are notes that will need to play before the next interval,
       // schedule them and advance the pointer.
-      while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
-        this.scheduleNote(current16thNote, nextNoteTime);
+      while (
+        this.nextNoteTime <
+        audioContext.currentTime + this.scheduleAheadTime
+      ) {
+        this.scheduleNote(this.current16thNote, this.nextNoteTime);
         this.nextNote();
       }
     },
@@ -184,13 +194,13 @@ export default {
 
     nextNote() {
       // Advance current note and time by a 16th note...
-      const secondsPerBeat = 60.0 / tempo; // Notice this picks up the CURRENT
+      const secondsPerBeat = 60.0 / this.tempo; // Notice this picks up the CURRENT
       // tempo value to calculate beat length.
-      nextNoteTime += 0.25 * secondsPerBeat; // Add beat length to last beat time
+      this.nextNoteTime += 0.25 * secondsPerBeat; // Add beat length to last beat time
 
-      current16thNote++; // Advance the beat number, wrap to zero
-      if (current16thNote === 64) {
-        current16thNote = 0;
+      this.current16thNote++; // Advance the beat number, wrap to zero
+      if (this.current16thNote === 64) {
+        this.current16thNote = 0;
       }
     },
 
@@ -255,11 +265,11 @@ export default {
 
       this.sources[index].analyser = this.analyser;
 
-      if (sampleStore[filename]) {
-        delete sampleStore[filename];
+      if (this.sampleStore[filename]) {
+        delete this.sampleStore[filename];
       }
 
-      sampleStore[filename] = sample;
+      this.sampleStore[filename] = sample;
     },
 
     stopSample(index) {
