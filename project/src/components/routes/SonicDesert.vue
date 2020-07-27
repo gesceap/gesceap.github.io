@@ -1,6 +1,6 @@
 <template>
   <div>
-    <audio autoplay loop ref="wind">
+    <audio preload autoplay loop ref="wind">
       <source src="~../../../assets/sonic-desert/wind.mp3" type="audio/mpeg" />
       <source src="~../../../assets/sonic-desert/wind.ogg" type="audio/ogg" />
     </audio>
@@ -16,6 +16,7 @@
         autoplay
         loop
         muted
+        preload
       ></video>
     </div>
 

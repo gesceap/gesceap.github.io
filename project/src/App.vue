@@ -1,5 +1,13 @@
 <template>
   <div id="app">
+    <!-- sneaky preload for sonic-desert video -->
+    <video
+      style="display: none"
+      src="~../assets/sonic-desert/background.mp4"
+      muted
+      preload
+    ></video>
+
     <RouterView v-if="webaudioShieldAccepted" />
 
     <div id="sm">
@@ -45,11 +53,21 @@
       >
         <img alt="SoundCloud" src="/img/sc.png" />
       </a>
+      <RouterLink to="/prime16">
+        <img alt="Looper" src="/img/looper.png" />
+      </RouterLink>
     </div>
 
-    <div v-if="!webaudioShieldAccepted" class="web-audio-sheild">
-      <button @click="clickBegin">Begin</button>
-    </div>
+    <Transition name="fade">
+      <div v-if="!webaudioShieldAccepted" class="web-audio-sheild">
+        <button @click="clickBegin" aria-label="Begin" title="Begin">
+          <img
+            src="~../assets/sonic-desert/mystic-rose.png"
+            alt="Mystic Rose"
+          />
+        </button>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -104,16 +122,45 @@ body {
 
 .web-audio-sheild {
   background-color: #000;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  background-image: url("~../assets/sonic-desert/desert.jpg");
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+
+  position: absolute;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
 
   display: flex;
+  align-content: center;
   justify-content: center;
-  align-items: center;
+}
+
+.web-audio-sheild button {
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  max-width: 33vw;
+  min-width: 250px;
+  align-self: center;
+  border-radius: 50%;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.web-audio-sheild img {
+  width: 100%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
