@@ -1,13 +1,5 @@
 <template>
   <div id="app">
-    <!-- sneaky preload for sonic-desert video -->
-    <video
-      style="display: none"
-      src="~../assets/sonic-desert/background.mp4"
-      muted
-      preload
-    ></video>
-
     <RouterView v-if="webaudioShieldAccepted" />
 
     <div id="sm">
@@ -59,11 +51,12 @@
     </div>
 
     <Transition name="fade">
-      <div v-if="!webaudioShieldAccepted" class="web-audio-sheild">
+      <div v-if="!webaudioShieldAccepted" class="web-audio-shield">
         <button @click="clickBegin" aria-label="Begin" title="Begin">
           <img
             src="~../assets/sonic-desert/mystic-rose.png"
             alt="Mystic Rose"
+            class="invert"
           />
         </button>
       </div>
@@ -120,12 +113,8 @@ body {
   margin: 5px;
 }
 
-.web-audio-sheild {
+.web-audio-shield {
   background-color: #000;
-  background-image: url("~../assets/sonic-desert/desert.jpg");
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
 
   position: absolute;
   width: 100%;
@@ -138,7 +127,7 @@ body {
   justify-content: center;
 }
 
-.web-audio-sheild button {
+.web-audio-shield button {
   -webkit-appearance: none;
   background: none;
   border: none;
@@ -151,7 +140,7 @@ body {
   overflow: hidden;
 }
 
-.web-audio-sheild img {
+.web-audio-shield img {
   width: 100%;
 }
 
@@ -162,5 +151,9 @@ body {
 
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.invert {
+  filter: invert();
 }
 </style>

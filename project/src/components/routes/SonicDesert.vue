@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <div v-if="webaudioShieldAccepted"> -->
     <audio preload autoplay loop ref="wind">
       <source src="~../../../assets/sonic-desert/wind.mp3" type="audio/mpeg" />
       <source src="~../../../assets/sonic-desert/wind.ogg" type="audio/ogg" />
@@ -28,6 +29,18 @@
         />
       </button>
     </div>
+    <!-- </div> -->
+
+    <!-- <Transition name="fade">
+      <div v-if="!webaudioShieldAccepted" class="web-audio-shield sonic-desert">
+        <button @click="clickBegin" aria-label="Begin" title="Begin">
+          <img
+            src="~../../../assets/sonic-desert/mystic-rose.png"
+            alt="Mystic Rose"
+          />
+        </button>
+      </div>
+    </Transition> -->
   </div>
 </template>
 
@@ -36,11 +49,16 @@ export default {
   data() {
     return {
       trackPlaying: false,
-      prime16Timer: null
+      prime16Timer: null,
+      webaudioShieldAccepted: false
     };
   },
 
   methods: {
+    clickBegin() {
+      this.webaudioShieldAccepted = true;
+    },
+
     async clickRose() {
       this.trackPlaying = !this.trackPlaying;
 
@@ -116,5 +134,12 @@ export default {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.web-audio-shield.sonic-desert {
+  background-image: url("~../../../assets/sonic-desert/desert.jpg");
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
 }
 </style>
