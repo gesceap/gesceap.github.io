@@ -1,9 +1,30 @@
 body{
     background-color: black;
-    background-image: linear-gradient(white, black);
+    justify-content: center;
 }
 
-.record-loop {
+h1{
+    color: whitesmoke;
+    text-align: center;
+    font-family: Arial;
+    font-weight: bold;
+}
+
+h2{
+    color: whitesmoke;
+    text-align: center;
+    font-family: Arial;
+    font-weight: normal;
+}
+
+h3{
+    color: grey;
+    text-align: center;
+    font-style: italic;
+
+}
+
+.video {
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -18,8 +39,4 @@ body{
 #icons {
     height: 50px;
     width: 50px;
-}
-
-#jiffy {
-    border: 1px solid #555;
 }
