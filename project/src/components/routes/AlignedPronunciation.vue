@@ -10,13 +10,15 @@
       @mouseleave="clearCurrentIndex"
     >
       <span
-        class="symbol"
-        :class="{ hovered: i === currentIndex }"
         v-for="(symbol, i) in geseap"
-        :data-symbol="i"
+        class="symbol"
+        :class="{ hovered: symbol.index === currentIndex }"
+        :data-symbol="symbol.index"
         :key="i"
-        @pointerenter="playSymbol(i)"
-        >{{ symbol }}</span
+        @pointerenter="
+          symbol.type === INTERACTION_TYPE && playSymbol(symbol.index)
+        "
+        >{{ symbol.character }}</span
       >
     </div>
   </div>
@@ -35,11 +37,36 @@ const files = [
   "5_P.wav"
 ];
 
+const INTERACTION_TYPE = Symbol();
+const PUNCTUATION_TYPE = Symbol();
+
+//  /jeˈʃæɑp/
+
 export default {
   data() {
     return {
-      latin: ["G", "E", "SC", "E", "A", "P"],
-      ipa: ["j", "e", "ʃ", "æ", "ɑ", "p"],
+      INTERACTION_TYPE,
+      PUNCTUATION_TYPE,
+
+      latin: [
+        { type: INTERACTION_TYPE, character: "G", index: 0 },
+        { type: INTERACTION_TYPE, character: "E", index: 1 },
+        { type: INTERACTION_TYPE, character: "SC", index: 2 },
+        { type: INTERACTION_TYPE, character: "E", index: 3 },
+        { type: INTERACTION_TYPE, character: "A", index: 4 },
+        { type: INTERACTION_TYPE, character: "P", index: 5 }
+      ],
+      ipa: [
+        { type: PUNCTUATION_TYPE, character: "/" },
+        { type: INTERACTION_TYPE, character: "j", index: 0 },
+        { type: INTERACTION_TYPE, character: "e", index: 1 },
+        { type: PUNCTUATION_TYPE, character: "ˈ" },
+        { type: INTERACTION_TYPE, character: "ʃ", index: 2 },
+        { type: INTERACTION_TYPE, character: "æ", index: 3 },
+        { type: INTERACTION_TYPE, character: "ɑ", index: 4 },
+        { type: INTERACTION_TYPE, character: "p", index: 5 },
+        { type: PUNCTUATION_TYPE, character: "/" }
+      ],
       symbols: 0,
       sample: null,
       lastIndex: -1,
